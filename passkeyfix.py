@@ -45,9 +45,9 @@ class PasskeyFix:
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--old", help="Old passkey to be replaced", required=True)
-    parser.add_argument("--new", help="New passkey to replace with", required=True)
-    parser.add_argument("--dir", help="Directory path containing the .torrents", required=True)
+    parser = argparse.ArgumentParser(description="A simple utility to bulk replace passkeys in .torrent files")
+    parser.add_argument("--old", help="old passkey to be replaced", type=str, metavar="<old passkey>", required=True)
+    parser.add_argument("--new", help="new passkey to replace with", metavar="<new passkey>", type=str, required=True)
+    parser.add_argument("--dir", help="directory containing .torrents", metavar="<path>", type=str, required=True)
     args = parser.parse_args()
     PasskeyFix(args)

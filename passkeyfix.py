@@ -9,37 +9,36 @@ class PasskeyFix:
         logging.basicConfig(
             level=logging.DEBUG, format="%(asctime)s | %(levelname)s | %(funcName)s:%(lineno)d | %(message)s"
         )
-        self.old_passkey = bytes(args.old, encoding="latin1")
-        self.new_passkey = bytes(args.new, encoding="latin1")
-        self.torrents = [torrent for torrent in glob.glob(pathname="*.torrent", root_dir=args.dir)]
-        self.stats = {"total": len(self.torrents), "updated": 0, "skipped": 0}
+        old_passkey = bytes(args.old, encoding="latin1")
+        new_passkey = bytes(args.new, encoding="latin1")
+        torrents = [torrent for torrent in glob.glob(pathname="*.torrent", root_dir=args.dir)]
+        stats = {"total": len(torrents), "updated": 0, "skipped": 0}
 
-        logging.info(f"{self.stats['total']} torrent(s) found")
+        logging.info(f"{stats['total']} torrent(s) found")
 
-        for index, file in enumerate(self.torrents):
-            progress = f"[{index + 1}/{self.stats['total']}]"
-            self.path = os.path.join(args.dir, file)
+        for index, file in enumerate(torrents):
+            progress = f"[{index + 1}/{stats['total']}]"
+            path = os.path.join(args.dir, file)
 
-            if self.old_passkey not in open(self.path, "rb").read():
+            if old_passkey not in open(path, "rb").read():
                 logging.info(f"{progress} Skipped {file}, passkey not found")
-                self.stats["skipped"] += 1
+                stats["skipped"] += 1
                 continue
 
-            with open(self.path, "rb") as f:
+            with open(path, "rb") as f:
                 data = f.read()
 
-            with open(self.path, "wb") as f:
-                data = data.replace(self.old_passkey, self.new_passkey)
-                f.write(data)
+            with open(path, "wb") as f:
+                f.write(data.replace(old_passkey, new_passkey))
 
             logging.info(f"{progress} Updated {file}, passkey rewritten")
-            self.stats["updated"] += 1
+            stats["updated"] += 1
 
         logging.info(
             (
-                f"Operation completed. {self.stats['total']} torrent(s) found. "
-                f"{self.stats['updated']} torrent(s) rewritten. "
-                f"{self.stats['skipped']} torrent(s) skipped."
+                f"Operation completed. {stats['total']} torrent(s) found. "
+                f"{stats['updated']} torrent(s) rewritten. "
+                f"{stats['skipped']} torrent(s) skipped."
             )
         )
 
